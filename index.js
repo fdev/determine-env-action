@@ -1,6 +1,6 @@
 'use strict'
 
-import { exportVariable, getBooleanInput, getInput, info, setFailed, setOutput } from '@actions/core'
+import { getInput, info, setFailed, setOutput } from '@actions/core'
 
 /**
  * Returns an environment variable or fail it is empty.
@@ -102,19 +102,12 @@ async function run() {
     const branch = getBranch()
     const fallback = getInput('default', { required: true })
     const mapping = getMapping()
-    const shouldExport = getBooleanInput('export')
 
     info(`Determine environment for branch ${branch}`)
 
     const environment = matchBranch(branch, mapping, fallback)
     setOutput('environment', environment)
     setOutput('branch', branch)
-
-    if (shouldExport) {
-      info(`Exporting as environment variables`)
-      exportVariable('ENVIRONMENT', environment)
-      exportVariable('BRANCH', branch)
-    }
   }
   catch (err) {
     setFailed(err.message)

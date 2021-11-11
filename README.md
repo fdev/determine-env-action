@@ -13,11 +13,10 @@ Determine the environment based on the branch name.
 
 ## Inputs
 
-| Name      | Description                                             | Default |      Required      |
-|-----------|---------------------------------------------------------|---------|:------------------:|
-| `mapping` | Mapping of branch names to environments.                |         | :heavy_check_mark: |
-| `default` | Default environment.                                    |         | :heavy_check_mark: |
-| `export`  | Should the result be exported as environment variables. | `true`  |        :x:         |
+| Name      | Description                              |      Required      |
+|-----------|------------------------------------------|:------------------:|
+| `mapping` | Mapping of branch names to environments. | :heavy_check_mark: |
+| `default` | Default environment.                     | :heavy_check_mark: |
 
 The `mapping` variable should contain a JSON object where the key represents a branch name and the value the environment it should be mapped to. Wildcards (`*`) can be used and when multiple keys match the longest key is used.
 

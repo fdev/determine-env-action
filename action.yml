@@ -9,9 +9,6 @@ inputs:
   default:
     description: "Default environment"
     required: true
-  variable:
-    description: "Environment variable to place the result in"
-    required: false
 
 runs:
   using: "node12"
