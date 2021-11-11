@@ -9,18 +9,15 @@ Determine the environment based on the branch name.
   with:
     default: 'develop'
     mapping: '{ "feature/*": "acceptance", "master": "production" }'
-  id: env
-
-- run: echo ${{ steps.env.outputs.environment }}
 ```
 
 ## Inputs
 
-| Name       | Description                                  |      Required      |
-|------------|----------------------------------------------|:------------------:|
-| `mapping`  | Mapping of branch names to environments.     | :heavy_check_mark: |
-| `default`  | Default environment.                         | :heavy_check_mark: |
-| `variable` | Environment variable to store the result in. |        :x:         |
+| Name      | Description                                             | Default |      Required      |
+|-----------|---------------------------------------------------------|---------|:------------------:|
+| `mapping` | Mapping of branch names to environments.                |         | :heavy_check_mark: |
+| `default` | Default environment.                                    |         | :heavy_check_mark: |
+| `export`  | Should the result be exported as environment variables. | `true`  |        :x:         |
 
 The `mapping` variable should contain a JSON object where the key represents a branch name and the value the environment it should be mapped to. Wildcards (`*`) can be used and when multiple keys match the longest key is used.
 
@@ -29,3 +26,4 @@ The `mapping` variable should contain a JSON object where the key represents a b
 | Name          | Description                         |
 |---------------|-------------------------------------|
 | `environment` | Name of the determined environment. |
+| `branch`      | Name of the determined branch.      |

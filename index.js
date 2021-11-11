@@ -1,26 +1,46 @@
 'use strict'
 
-import { exportVariable, getInput, info, setOutput, setFailed } from '@actions/core'
+import { exportVariable, getBooleanInput, getInput, info, setFailed, setOutput } from '@actions/core'
 
 /**
- * Returns the branch name based on the GITHUB_REF environment variable.
- *
- * refs/heads/develop -> develop
- * refs/heads/feature/something-awesome -> feature/something-awesome
- * refs/tags/main -> main
+ * Returns an environment variable or fail it is empty.
  */
-function getBranch() {
-  const ref = process.env.GITHUB_REF
+function getVariable(key) {
+  const ref = process.env[key]
 
   if (!ref) {
-    throw new Error('Was not able to get GITHUB_REF from environment.')
+    throw new Error(`Unexpected empty value for ${key}.`)
   }
 
-  const regex = /refs\/(heads|tags)\/(\S+)/
+  return ref
+}
+
+/**
+ * The branch or tag ref that triggered the workflow.
+ */
+function determineRef() {
+  const event = process.env.GITHUB_EVENT_NAME
+
+  if (event === 'pull_request') {
+    info(`Event type 'pull_request', using GITHUB_HEAD_REF for ref`)
+    return getVariable('GITHUB_HEAD_REF')
+  }
+
+  info(`Using GITHUB_REF for ref`)
+  return getVariable('GITHUB_REF')
+}
+
+/**
+ * Returns the branch name from the GITHUB_REF_NAME environment variable.
+ */
+function getBranch() {
+  const ref = determineRef()
+
+  const regex = /refs\/(heads|tags|pull)\/(\S+)/
   const match = ref.match(regex)
   
   if (!match) {
-    throw new Error('Unexpected format of GITHUB_REF.')
+    throw new Error(`Unexpected format of ref (${ref}).`)
   }
 
   return match[2]
@@ -30,7 +50,7 @@ function getBranch() {
  * Returns the action input variable `mapping` and validates its content.
  */
 function getMapping() {
-  const mapping = JSON.parse(getInput('mapping'))
+  const mapping = JSON.parse(getInput('mapping', { required: true }))
   
   // Make sure mapping is what we expect.
   for (var key in mapping) {
@@ -80,18 +100,20 @@ function matchBranch(branch, mapping, fallback) {
 async function run() {
   try {
     const branch = getBranch()
-    const fallback = getInput('default')
+    const fallback = getInput('default', { required: true })
     const mapping = getMapping()
-    const variable = getInput('variable')
+    const shouldExport = getBooleanInput('export')
 
     info(`Determine environment for branch ${branch}`)
 
     const environment = matchBranch(branch, mapping, fallback)
     setOutput('environment', environment)
+    setOutput('branch', branch)
 
-    if (variable) {
-      info(`Exporting to environment variable ${variable}`)
-      exportVariable(variable, environment)
+    if (shouldExport) {
+      info(`Exporting as environment variables`)
+      exportVariable('ENVIRONMENT', environment)
+      exportVariable('BRANCH', branch)
     }
   }
   catch (err) {
