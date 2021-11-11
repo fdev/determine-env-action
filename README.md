@@ -22,6 +22,7 @@ Determine the environment based on the branch name.
 | `default`  | Default environment.                         | :heavy_check_mark: |
 | `variable` | Environment variable to store the result in. |        :x:         |
 
+The `mapping` variable should contain a JSON object where the key represents a branch name and the value the environment it should be mapped to. Wildcards (`*`) can be used and when multiple keys match the longest key is used.
 
 ## Outputs
 
