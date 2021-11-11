@@ -1,0 +1,15 @@
+name: "Determine Environment Action"
+description: "Determine the environment based on the branch name"
+inputs:
+  mapping:
+    description: "Mapping of branch names to environments"
+    required: true
+  default:
+    description: "Default environment"
+    required: true
+  variable:
+    description: "Environment variable to place the result in"
+    required: false
+runs:
+  using: "node12"
+  main: "index.js"
