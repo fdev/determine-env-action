@@ -104,10 +104,12 @@ async function run() {
     const branch = getBranch()
 
     core.info(`Determine environment for branch ${branch}`)
-
     const environment = matchBranch(branch, mapping, fallback)
+
     core.setOutput('environment', environment)
     core.setOutput('branch', branch)
+
+    core.info(JSON.stringify({ branch, environment }, null, 2))
   }
   catch (err) {
     core.setFailed(err.message)
