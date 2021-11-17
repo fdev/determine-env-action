@@ -1,6 +1,6 @@
 'use strict'
 
-import { getInput, info, setFailed, setOutput } from '@actions/core'
+const core = require('@actions/core')
 
 /**
  * Returns an environment variable or fail it is empty.
@@ -22,11 +22,11 @@ function determineRef() {
   const event = process.env.GITHUB_EVENT_NAME
 
   if (event === 'pull_request') {
-    info(`Event type 'pull_request', using GITHUB_HEAD_REF for ref`)
+    core.info(`Event type 'pull_request', using GITHUB_HEAD_REF for ref`)
     return getVariable('GITHUB_HEAD_REF')
   }
 
-  info(`Using GITHUB_REF for ref`)
+  core.info(`Using GITHUB_REF for ref`)
   return getVariable('GITHUB_REF')
 }
 
@@ -50,7 +50,7 @@ function getBranch() {
  * Returns the action input variable `mapping` and validates its content.
  */
 function getMapping() {
-  const mapping = JSON.parse(getInput('mapping', { required: true }))
+  const mapping = JSON.parse(core.getInput('mapping', { required: true }))
   
   // Make sure mapping is what we expect.
   for (var key in mapping) {
@@ -99,23 +99,21 @@ function matchBranch(branch, mapping, fallback) {
  */
 async function run() {
   try {
-    const branch = getBranch()
-    const fallback = getInput('default', { required: true })
     const mapping = getMapping()
+    const fallback = core.getInput('default', { required: true })
+    const branch = getBranch()
 
-    info(`Determine environment for branch ${branch}`)
+    core.info(`Determine environment for branch ${branch}`)
 
     const environment = matchBranch(branch, mapping, fallback)
-    setOutput('environment', environment)
-    setOutput('branch', branch)
+    core.setOutput('environment', environment)
+    core.setOutput('branch', branch)
   }
   catch (err) {
-    setFailed(err.message)
+    core.setFailed(err.message)
   }
 }
 
 if (require.main === module) {
   run()
 }
-
-export default run;
