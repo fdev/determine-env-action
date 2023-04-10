@@ -10,6 +10,6 @@
   "author": "Folkert de Vries",
   "homepage": "https://github.com/fdev/determine-env-action",
   "dependencies": {
-    "@actions/core": "^1.6.0"
+    "@actions/core": "^1.10.0"
   }
 }
